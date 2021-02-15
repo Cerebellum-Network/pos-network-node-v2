@@ -66,6 +66,7 @@ use pallet_contracts_rpc_runtime_api::ContractExecResult;
 use pallet_session::{historical as pallet_session_historical};
 use sp_inherents::{InherentData, CheckInherentsResult};
 use static_assertions::const_assert;
+pub use pallet_cere_ddc;
 
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
@@ -683,6 +684,26 @@ impl pallet_contracts::Trait for Runtime {
 	type WeightPrice = pallet_transaction_payment::Module<Self>;
 }
 
+parameter_types! {
+	// Choose a fee that incentivizes desireable behavior.
+	pub const NickReservationFee: u128 = 100;
+	pub const MinNickLength: usize = 1;
+	// Maximum bounds on storage are important to secure your chain.
+	pub const MaxNickLength: usize = usize::MAX;
+}
+
+/// Configure the send data pallet in pallets/template.
+impl pallet_cere_ddc::Trait for Runtime {
+	// Use the MinNickLength from the parameter_types block.
+	type MinLength = MinNickLength;
+
+	// Use the MaxNickLength from the parameter_types block.
+	type MaxLength = MaxNickLength;
+
+	// The ubiquitous event type.
+	type Event = Event;
+}
+
 impl pallet_sudo::Trait for Runtime {
 	type Event = Event;
 	type Call = Call;
@@ -925,6 +946,7 @@ construct_runtime!(
 		Scheduler: pallet_scheduler::{Module, Call, Storage, Event<T>},
 		Proxy: pallet_proxy::{Module, Call, Storage, Event<T>},
 		Multisig: pallet_multisig::{Module, Call, Storage, Event<T>},
+		CereDDCModule: pallet_cere_ddc::{Module, Call, Storage, Event<T>},
 	}
 );
 
@@ -1221,6 +1243,7 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, pallet_treasury, Treasury);
 			add_benchmark!(params, batches, pallet_utility, Utility);
 			add_benchmark!(params, batches, pallet_vesting, Vesting);
+			add_benchmark!(params, batches, pallet_cere_ddc, Examples);
 
 			if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
 			Ok(batches)

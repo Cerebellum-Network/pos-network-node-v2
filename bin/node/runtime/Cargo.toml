@@ -79,6 +79,7 @@ pallet-utility = { version = "2.0.0", default-features = false, path = "../../..
 pallet-transaction-payment = { version = "2.0.0", default-features = false, path = "../../../frame/transaction-payment" }
 pallet-transaction-payment-rpc-runtime-api = { version = "2.0.0", default-features = false, path = "../../../frame/transaction-payment/rpc/runtime-api/" }
 pallet-vesting = { version = "2.0.0", default-features = false, path = "../../../frame/vesting" }
+pallet-cere-ddc = { version = "2.0.0", default-features = false, path = "../../../frame/cere-ddc" }
 
 [build-dependencies]
 wasm-builder-runner = { version = "1.0.5", package = "substrate-wasm-builder-runner", path = "../../../utils/wasm-builder-runner" }
@@ -104,6 +105,7 @@ std = [
 	"pallet-contracts-rpc-runtime-api/std",
 	"pallet-democracy/std",
 	"pallet-elections-phragmen/std",
+	"pallet-cere-ddc/std",
 	"frame-executive/std",
 	"pallet-finality-tracker/std",
 	"pallet-grandpa/std",

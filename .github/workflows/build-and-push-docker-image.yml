@@ -16,8 +16,8 @@ jobs:
       - name: 'Checkout submodules'
         run: 'git submodule update --init --recursive'
       - name: 'Check compatible of Cere ddc with node'
-        run:
-          cd ./frame/ddc-pallet/ 
+        run: 
+          cd ./frame/ddc-pallet/ &&
           cargo check
       - name: 'Execute automation unit test for Cere ddc pallet'
         run: 'cargo +nightly-2020-10-06 test -p pallet-cere-ddc'

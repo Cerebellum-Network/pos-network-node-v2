@@ -20,7 +20,7 @@ jobs:
           cd ./frame/ddc-pallet/ &&
           cargo check
       - name: 'Execute automation unit test for Cere ddc pallet'
-        run: 'cargo +nightly-2020-10-06 test -p pallet-cere-ddc'
+        run: 'cargo test -p pallet-cere-ddc'
       - name: 'Configure AWS credentials'
         uses: 'aws-actions/configure-aws-credentials@v1'
         with:

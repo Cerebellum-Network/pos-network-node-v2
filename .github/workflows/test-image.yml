@@ -17,9 +17,9 @@ jobs:
         run: 'git submodule update --init --recursive'
       - name: 'Install Environment'
         run: |
-          apt-get update && \
-          apt-get upgrade -y && \
-          apt-get install -y cmake pkg-config libssl-dev git clang
+          sudo apt-get update && \
+          sudo apt-get upgrade -y && \
+          sudo apt-get install -y cmake pkg-config libssl-dev git clang
       - name: 'Install Rust and execute test'
         run: |
           curl https://sh.rustup.rs -sSf | sh -s -- -y && \

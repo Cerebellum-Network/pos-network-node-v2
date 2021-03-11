@@ -11,8 +11,8 @@ RUN apt-get update && \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
          export PATH=$PATH:$HOME/.cargo/bin && \
          scripts/init.sh && \
-         cargo test && \
-         cargo build --$PROFILE
+         cargo +nightly-2020-10-06 build test && \
+         cargo +nightly-2020-10-06 build --$PROFILE
 
 # ===== SECOND STAGE ======
 FROM phusion/baseimage:0.11

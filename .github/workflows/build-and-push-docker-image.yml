@@ -3,16 +3,12 @@ on:
   push:
     branches:
       - 'dev-cere'
-      - 'feature/integrate-test-in-ci-flow'
-  pull_request:
-    branches:
-      - 'dev-cere'
 env:
   ECR_REPOSITORY: 'crb-substrate-testnet-node'
   IMAGE_TAG: ${{ github.run_number }}-${{ github.sha }}
 jobs:
   build-and-push:
-    runs-on: 'ubuntu-18.04'
+    runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout repository'
         uses: 'actions/checkout@v1'

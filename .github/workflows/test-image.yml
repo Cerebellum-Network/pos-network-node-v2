@@ -7,12 +7,9 @@ on:
   pull_request:
     branches:
       - 'dev-cere'
-env:
-  ECR_REPOSITORY: 'crb-substrate-testnet-node'
-  IMAGE_TAG: ${{ github.run_number }}-${{ github.sha }}
 jobs:
   build-and-push:
-    runs-on: 'ubuntu-18.04'
+    runs-on: 'ubuntu-latest'
     steps:
       - name: 'Checkout repository'
         uses: 'actions/checkout@v1'
@@ -24,8 +21,6 @@ jobs:
           apt-get upgrade -y && \
           apt-get install -y cmake pkg-config libssl-dev git clang
       - name: 'Install Rust and execute test'
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           curl https://sh.rustup.rs -sSf | sh -s -- -y && \
           export PATH=$PATH:$HOME/.cargo/bin && \

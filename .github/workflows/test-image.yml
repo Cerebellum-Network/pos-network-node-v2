@@ -1,4 +1,4 @@
-name: 'Build and push Docker image'
+name: 'Automation test when have PR'
 on:
   push:
     branches:

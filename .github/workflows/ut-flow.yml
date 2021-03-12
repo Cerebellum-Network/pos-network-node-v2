@@ -14,10 +14,10 @@ jobs:
   build-and-push:
     runs-on: 'ubuntu-latest'
     steps:
-      - name: 'Checkout dev-cere branch'
-        run: |
-          git checkout dev-cere
-          git pull origin dev-cere
+      - name: 'Checkout repository'
+        uses: 'actions/checkout@v1'
+      - name: 'Checkout feature branch'
+        run: 'git checkout feature/cbi-81-test-in-ci-flow'
       - name: 'Checkout submodules'
         run: 'git submodule update --init --recursive'
       - name: 'Configure AWS credentials'

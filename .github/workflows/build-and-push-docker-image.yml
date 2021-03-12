@@ -1,4 +1,4 @@
-name: 'Automation test flow'
+name: 'Build and push Docker image'
 on:
   push:
     branches:

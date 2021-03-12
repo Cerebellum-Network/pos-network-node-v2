@@ -1,7 +1,6 @@
 FROM phusion/baseimage:0.11 as builder
 LABEL maintainer="team@cere.network"
 LABEL description="This is the build stage to create the binary."
-ARG PROFILE=release
 WORKDIR /cerenetwork
 COPY . /cerenetwork
 

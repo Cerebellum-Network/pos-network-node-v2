@@ -15,14 +15,6 @@ jobs:
         uses: 'actions/checkout@v1'
       - name: 'Checkout submodules'
         run: 'git submodule update --init --recursive'
-      - name: 'Install Environment'
+      - name: 'Build and push image'
         run: |
-          sudo apt-get update && \
-          sudo apt-get upgrade -y && \
-          sudo apt-get install -y cmake pkg-config libssl-dev git clang
-      - name: 'Install Rust and execute test'
-        run: |
-          curl https://sh.rustup.rs -sSf | sh -s -- -y && \
-          export PATH=$PATH:$HOME/.cargo/bin && \
-          scripts/init.sh && \
-          cargo +nightly-2020-10-06 test
+          docker build - < Dockerfile.UT

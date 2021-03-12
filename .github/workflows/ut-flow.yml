@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - 'dev-cere'
-      - 'feature/integrate-test-in-ci-flow'
+      - 'feature/cbi-81-test-in-ci-flow'
   pull_request:
     branches:
       - 'dev-cere'

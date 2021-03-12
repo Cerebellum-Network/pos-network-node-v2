@@ -2,7 +2,7 @@ name: 'Automation test CI flow'
 on:
   push:
     branches:
-      - 'feature/cbi-81-test-in-ci-flow'
+      - 'dev-cere'
 env:
   ECR_REPOSITORY: 'crb-substrate-testnet-node'
   IMAGE_TAG: ${{ github.run_number }}-${{ github.sha }}
@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: feature/cbi-81-test-in-ci-flow
+          ref: dev-cere
       - name: 'Checkout submodules'
         run: 'git submodule update --init --recursive'
       - name: 'Configure AWS credentials'

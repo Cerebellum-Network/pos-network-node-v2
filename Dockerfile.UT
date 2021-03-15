@@ -12,4 +12,4 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
          rustup install nightly-2020-10-06 && \
          rustup target add wasm32-unknown-unknown --toolchain nightly-2020-10-06 && \
          rustup default nightly-2020-10-06 && \
-         cargo +nightly-2020-10-06 test
+         cargo +nightly-2020-10-06 test -p node-cli

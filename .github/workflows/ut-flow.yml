@@ -1,8 +1,5 @@
 name: 'Automation test CI flow'
 on:
-  push:
-    branches:
-      - 'feature/cbi-81-test-in-ci-flow'
   pull_request:
     branches: [dev-cere]
     types: [opened]

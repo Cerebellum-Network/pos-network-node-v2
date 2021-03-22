@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - 'dev-cere'
-      - 'feature/cbi-327-stable-rust-ver'
 env:
   ECR_REPOSITORY: 'crb-substrate-testnet-node'
   IMAGE_TAG: ${{ github.run_number }}-${{ github.sha }}

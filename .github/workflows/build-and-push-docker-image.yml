@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - dev-cere
-      - feature/cbi-327-stable-rust-ver
 env:
   ECR_REPOSITORY: pos-network-node
 jobs:

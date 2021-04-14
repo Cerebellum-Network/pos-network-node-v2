@@ -24,6 +24,12 @@ Follow the [instructions](https://github.com/Cerebellum-Network/validator-instru
  docker build .
 ```
 
+4. Run the following command to build the node locally.
+ 
+```
+cargo build --release -p node-runtime
+```
+
 ## Versioning strategy
 
 The package must follow **Semantic Versioning** (SemVer).

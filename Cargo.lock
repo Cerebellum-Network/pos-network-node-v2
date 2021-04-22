@@ -3886,7 +3886,6 @@ dependencies = [
  "pallet-scheduler",
  "pallet-session",
  "pallet-session-benchmarking",
- "pallet-society",
  "pallet-staking",
  "pallet-staking-reward-curve",
  "pallet-sudo",
@@ -4006,7 +4005,6 @@ dependencies = [
  "pallet-grandpa",
  "pallet-indices",
  "pallet-session",
- "pallet-society",
  "pallet-staking",
  "pallet-timestamp",
  "pallet-transaction-payment",
@@ -4899,22 +4897,6 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-session",
- "sp-std",
-]
-
-[[package]]
-name = "pallet-society"
-version = "2.0.1"
-dependencies = [
- "frame-support",
- "frame-system",
- "pallet-balances",
- "parity-scale-codec",
- "rand_chacha 0.2.2",
- "serde",
- "sp-core",
- "sp-io",
- "sp-runtime",
  "sp-std",
 ]
 

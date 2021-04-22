@@ -72,7 +72,6 @@ pallet-session-benchmarking = { version = "2.0.0", path = "../../../frame/sessio
 pallet-staking = { version = "2.0.0", default-features = false, path = "../../../frame/staking" }
 pallet-staking-reward-curve = { version = "2.0.0", default-features = false, path = "../../../frame/staking/reward-curve" }
 pallet-scheduler = { version = "2.0.0", default-features = false, path = "../../../frame/scheduler" }
-pallet-society = { version = "2.0.0", default-features = false, path = "../../../frame/society" }
 pallet-sudo = { version = "2.0.0", default-features = false, path = "../../../frame/sudo" }
 pallet-timestamp = { version = "2.0.0", default-features = false, path = "../../../frame/timestamp" }
 pallet-treasury = { version = "2.0.0", default-features = false, path = "../../../frame/treasury" }
@@ -148,7 +147,6 @@ std = [
 	"sp-transaction-pool/std",
 	"pallet-utility/std",
 	"sp-version/std",
-	"pallet-society/std",
 	"pallet-recovery/std",
 	"pallet-vesting/std",
 ]
@@ -170,7 +168,6 @@ runtime-benchmarks = [
 	"pallet-multisig/runtime-benchmarks",
 	"pallet-proxy/runtime-benchmarks",
 	"pallet-scheduler/runtime-benchmarks",
-	"pallet-society/runtime-benchmarks",
 	"pallet-staking/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
 	"pallet-treasury/runtime-benchmarks",

@@ -412,7 +412,7 @@ fn unused_pot_should_diminish() {
 		assert_eq!(Balances::total_issuance(), init_total_issuance + 100);
 
 		<Treasury as OnInitialize<u64>>::on_initialize(2);
-		assert_eq!(Treasury::pot(), 50);
+		assert_eq!(Treasury::pot(), 100);
 		assert_eq!(Balances::total_issuance(), init_total_issuance + 50);
 	});
 }
@@ -427,7 +427,7 @@ fn rejected_spend_proposal_ignored_on_spend_period() {
 
 		<Treasury as OnInitialize<u64>>::on_initialize(2);
 		assert_eq!(Balances::free_balance(3), 0);
-		assert_eq!(Treasury::pot(), 50);
+		assert_eq!(Treasury::pot(), 100);
 	});
 }
 
@@ -497,7 +497,7 @@ fn pot_underflow_should_not_diminish() {
 		let _ = Balances::deposit_into_existing(&Treasury::account_id(), 100).unwrap();
 		<Treasury as OnInitialize<u64>>::on_initialize(4);
 		assert_eq!(Balances::free_balance(3), 150); // Fund has been spent
-		assert_eq!(Treasury::pot(), 25); // Pot has finally changed
+		assert_eq!(Treasury::pot(), 50); // Pot has finally changed
 	});
 }
 
@@ -682,7 +682,7 @@ fn approve_bounty_works() {
 			bond: deposit,
 			status: BountyStatus::Funded,
 		});
-		assert_eq!(Treasury::pot(), 100 - 50 - 25); // burn 25
+		assert_eq!(Treasury::pot(), 100 - 50 - 0); // burn 25
 		assert_eq!(Balances::free_balance(Treasury::bounty_account_id(0)), 50);
 	});
 }
@@ -911,7 +911,7 @@ fn cancel_and_refund() {
 
 		assert_ok!(Treasury::close_bounty(Origin::root(), 0));
 
-		assert_eq!(Treasury::pot(), 85); // - 25 + 10
+		assert_eq!(Treasury::pot(), 110); // - 25 + 10
 	});
 }
 

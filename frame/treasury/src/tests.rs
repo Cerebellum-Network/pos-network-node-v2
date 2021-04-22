@@ -413,7 +413,7 @@ fn unused_pot_should_diminish() {
 
 		<Treasury as OnInitialize<u64>>::on_initialize(2);
 		assert_eq!(Treasury::pot(), 100);
-		assert_eq!(Balances::total_issuance(), init_total_issuance + 50);
+		assert_eq!(Balances::total_issuance(), init_total_issuance + 100);
 	});
 }
 

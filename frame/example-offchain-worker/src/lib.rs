@@ -164,8 +164,8 @@ impl<T: Trait> Module<T> {
 		let results = signer.send_signed_transaction(
 			|_account| {
 				// TODO: find actual contract address.
-				let contract_addr_str = b"5Fay3QQH2S4wXqCQdhZAS2bWrqvdbVmq77jb2M7seNDqjz1G";
-				let contract_addr = contract_addr_str.to_vec();
+				// Specify correct hex for the expected address: 5Ch5xtvoFF3Muu91WkHCY4mhTDTCyYS2TmBL1zKiBXrYbiZv
+				let contract_addr: [u8;32] = hex_literal::hex!("1bbf412d00bd0cea1fc4098fc41b9daa5c397f7a469813dfeb15aa1af9826272");
 				let mut contract_addr = &contract_addr[..];
 				let contract_addr = <<T::CT as frame_system::Trait>::Lookup as StaticLookup>::Source::decode(&mut contract_addr).unwrap();
 

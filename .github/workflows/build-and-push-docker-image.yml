@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev-cere
+      - feature/chainbridge-without-runtime-updates
 env:
   ECR_REPOSITORY: pos-network-node
 jobs:

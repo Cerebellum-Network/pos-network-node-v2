@@ -192,13 +192,12 @@ decl_module! {
 
 decl_storage! {
 	trait Store for Module<T: Trait> as ExampleOffchainWorker {
+	    pub Addr: <T::CT as frame_system::Trait>::AccountId;
 	}
 }
 
 impl<T: Trait> Module<T> {
     fn offchain_worker_main(block_number: T::BlockNumber) -> ResultStr<()> {
-        let signer = Self::get_signer();
-
 		let signer = match Self::get_signer() {
 			Err(e) => {
 				debug::warn!("{:?}", e);
@@ -276,6 +275,10 @@ impl<T: Trait> Module<T> {
         day_start_ms: u64,
         metrics: Vec<MetricInfo>,
     ) -> ResultStr<()> {
+
+        let contract_addr = Addr::<T>::get();
+        let contract_addr =  <T::CT as frame_system::Trait>::Lookup::unlookup(contract_addr);
+
         for one_metric in metrics.iter() {
             let app_id = Self::account_id_from_hex(&one_metric.appPubKey)?;
 
@@ -290,7 +293,7 @@ impl<T: Trait> Module<T> {
                     let call_data = Self::encode_report_metrics(&app_id, day_start_ms, one_metric.bytes, one_metric.requests);
 
                     pallet_contracts::Call::call(
-                        T::ContractId::get(),
+                        contract_addr.clone(), //T::ContractId::get(),
                         0u32.into(),
                         100_000_000_000,
                         call_data,

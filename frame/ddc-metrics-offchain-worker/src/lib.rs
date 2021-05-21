@@ -110,7 +110,10 @@ pub fn get_contract_id() -> [u8; 32] {
     let value = sc_address_store.get::<[u8; 32]>();
 
     if !value.is_none() {
-        contract_id = value.unwrap().unwrap();
+		let unwrapped_contract_id = value.unwrap();
+		if !unwrapped_contract_id.is_none() {
+			contract_id = unwrapped_contract_id.unwrap();
+		}
     }
 
     return contract_id;

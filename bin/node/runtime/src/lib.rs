@@ -940,10 +940,14 @@ impl pallet_erc20::Trait for Runtime {
 }
 
 parameter_types! {
+	pub MetricsContractId: AccountId = {
+		AccountId::from(pallet_ddc_metrics_offchain_worker::get_contract_index())
+	};
 	pub const OcwBlockInterval: u32 = pallet_ddc_metrics_offchain_worker::BLOCK_INTERVAL;
 }
 
 impl pallet_ddc_metrics_offchain_worker::Trait for Runtime {
+	type ContractId = MetricsContractId;
 	type BlockInterval = OcwBlockInterval;
 
 	type CT = Self;

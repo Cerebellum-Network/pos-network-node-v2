@@ -35,6 +35,11 @@ extern crate alloc;
 
 use alloc::string::String;
 
+// Default value for contract ID
+pub const METRICS_CONTRACT_ID: [u8; 32] = [
+    96, 220, 84, 153, 65, 96, 13, 180, 40, 98, 142, 110, 218, 127, 9, 17, 182, 152, 78, 174, 24,
+    37, 26, 27, 128, 215, 170, 18, 3, 3, 69, 60,
+];
 pub const BLOCK_INTERVAL: u32 = 200; // TODO: Change to 1200 later [1h]. Now - 200 [10 minutes] for testing purposes.
 
 // Smart contract method selectors
@@ -106,6 +111,22 @@ where
 {
     let s: &str = Deserialize::deserialize(de)?;
     Ok(s.as_bytes().to_vec())
+}
+
+/// Return Id (Address) for the contract address that is stored in offchain persistance
+/// This functions is used in runtime
+pub fn get_contract_index() -> [u8; 32] {
+    let sc_address_store = StorageValueRef::persistent(b"ddc-metrics-offchain-worker::sc_address");
+
+    let mut contract_id = METRICS_CONTRACT_ID;
+
+    let value = sc_address_store.get::<[u8; 32]>();
+
+    if !value.is_none() {
+        contract_id = value.unwrap().unwrap();
+    }
+
+    return contract_id;
 }
 
 /// Defines application identifier for crypto keys of this module.
@@ -199,10 +220,7 @@ impl<T: Trait> Module<T> {
             Ok(signer) => signer,
         };
 
-        let contract_address = match Self::get_contract_id() {
-            None => return Ok(()),
-            Some(contract_address) => contract_address,
-        };
+        let contract_index = T::ContractId::get();
 
         let ddc_url = match Self::get_ddc_url() {
             None => return Ok(()),
@@ -215,7 +233,7 @@ impl<T: Trait> Module<T> {
         }
 
         let day_start_ms =
-            Self::sc_get_current_period_ms(contract_address.clone()).map_err(|err| {
+            Self::sc_get_current_period_ms(contract_index.clone()).map_err(|err| {
                 error!("[OCW] Contract error occurred: {:?}", err);
                 "Could not call get_current_period_ms TX"
             })?;
@@ -228,7 +246,7 @@ impl<T: Trait> Module<T> {
         })?;
 
         Self::send_metrics_to_sc(
-            contract_address.clone(),
+            contract_index.clone(),
             &signer,
             day_start_ms,
             aggregated_metrics,
@@ -238,10 +256,10 @@ impl<T: Trait> Module<T> {
             "could not submit report_metrics TX"
         })?;
 
-        let block_timestamp = sp_io::offchain::timestamp().unix_millis();
+        let block_timestamp = sp_io::offchain::timestamp().unix_millis() / 1000;
 
         if day_end_ms < block_timestamp {
-            Self::finalize_metric_period(contract_address.clone(), &signer, day_start_ms).map_err(
+            Self::finalize_metric_period(contract_index.clone(), &signer, day_start_ms).map_err(
                 |err| {
                     error!("[OCW] Contract error occurred: {:?}", err);
                     "could not call finalize_metric_period TX"
@@ -252,6 +270,8 @@ impl<T: Trait> Module<T> {
         Ok(())
     }
 
+    /// Return Address::Index(number) for the contract address that is stored in offchain persistance
+    /// This functions can be called here
     fn get_contract_id() -> Option<<<T::CT as frame_system::Trait>::Lookup as StaticLookup>::Source>
     {
         let value = StorageValueRef::persistent(b"ddc-metrics-offchain-worker::sc_address").get();
@@ -319,16 +339,16 @@ impl<T: Trait> Module<T> {
     }
 
     fn sc_get_current_period_ms(
-        contract_id: <<T::CT as frame_system::Trait>::Lookup as StaticLookup>::Source,
+        contract_index: <<T::CT as frame_system::Trait>::Lookup as StaticLookup>::Source,
     ) -> ResultStr<u64> {
-        // let contract_id = T::ContractId::get();
-        let contract_idx =
-            <<T::CT as frame_system::Trait>::Lookup as StaticLookup>::lookup(contract_id).unwrap();
+        let contract_address = <<T::CT as frame_system::Trait>::Lookup as StaticLookup>::lookup(
+            contract_index.clone(),
+        )?;
 
         let call_data = Self::encode_get_current_period_ms();
         let (exec_result, _gas_consumed) = pallet_contracts::Module::<T::CT>::bare_call(
             Default::default(),
-            contract_idx,
+            contract_address,
             0u32.into(),
             100_000_000_000,
             call_data,
@@ -358,8 +378,6 @@ impl<T: Trait> Module<T> {
         signer: &Signer<T::CST, T::AuthorityId>,
         in_day_start_ms: u64,
     ) -> ResultStr<()> {
-        // let contract_id = T::ContractId::get();
-
         let _call_data = Self::encode_finalize_metric_period(in_day_start_ms);
 
         let results = signer.send_signed_transaction(|_account| {
@@ -604,6 +622,7 @@ pub trait Trait: frame_system::Trait {
     type CT: pallet_contracts::Trait;
     type CST: CreateSignedTransaction<pallet_contracts::Call<Self::CT>>;
 
+    type ContractId: Get<<<Self::CT as frame_system::Trait>::Lookup as StaticLookup>::Source>;
     /// The identifier type for an offchain worker.
     type AuthorityId: AppCrypto<
         <Self::CST as SigningTypes>::Public,

@@ -219,10 +219,14 @@ where
 }
 
 parameter_types! {
+    pub MetricsContractId: AccountId = {
+        AccountId::from(crate::get_contract_index())
+    };
     pub const OcwBlockInterval: u32 = crate::BLOCK_INTERVAL;
 }
 
 impl Trait for Test {
+    type ContractId = MetricsContractId;
     type BlockInterval = OcwBlockInterval;
 
     type CT = Self;

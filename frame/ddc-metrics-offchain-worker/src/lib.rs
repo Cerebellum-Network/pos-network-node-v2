@@ -83,10 +83,10 @@ struct PartitionInfo {
 #[allow(non_snake_case)]
 struct MetricInfo {
     appPubKey: String,
-    #[serde(deserialize_with = "de_string_to_bytes")]
-    partitionId: Vec<u8>,
-    bytes: u128,
-    requests: u128,
+    partitionId: String,
+    storageBytes: u128,
+    wcuUsed: u128,
+    rcuUsed: u128,
 }
 
 impl MetricInfo {
@@ -94,8 +94,9 @@ impl MetricInfo {
         Self {
             appPubKey: Default::default(),
             partitionId: Default::default(),
-            bytes: Default::default(),
-            requests: Default::default(),
+            storageBytes: Default::default(),
+            wcuUsed: Default::default(),
+            rcuUsed: Default::default(),
         }
     }
 }
@@ -389,25 +390,28 @@ impl<T: Trait> Module<T> {
         for one_metric in metrics.iter() {
             let app_id = Self::account_id_from_hex(&one_metric.appPubKey)?;
 
-            if one_metric.bytes == 0 && one_metric.requests == 0 {
+            if one_metric.storageBytes == 0 && one_metric.wcuUsed == 0 && one_metric.rcuUsed == 0 {
                 continue;
             }
 
             let results = signer.send_signed_transaction(|account| {
                 info!(
-                    "[OCW] Sending transactions from {:?}: report_metrics({:?}, {:?}, {:?}, {:?})",
+                    "[OCW] Sending transactions from {:?}: report_metrics({:?}, {:?}, {:?}, {:?}), {:?}), {:?})",
                     account.id,
-                    one_metric.appPubKey,
                     day_start_ms,
-                    one_metric.bytes,
-                    one_metric.requests
+                    one_metric.appPubKey,
+                    one_metric.partitionId,
+                    one_metric.storageBytes,
+                    one_metric.wcuUsed,
+                    one_metric.rcuUsed
                 );
 
                 let call_data = Self::encode_report_metrics(
                     &app_id,
                     day_start_ms,
-                    one_metric.bytes,
-                    one_metric.requests,
+                    one_metric.storageBytes,
+                    one_metric.wcuUsed,
+                    one_metric.rcuUsed
                 );
 
                 let contract_id_unl =
@@ -541,13 +545,15 @@ impl<T: Trait> Module<T> {
         app_id: &AccountId32,
         day_start_ms: u64,
         stored_bytes: u128,
-        requests: u128,
+        wcu_used: u128,
+        rcu_used: u128,
     ) -> Vec<u8> {
         let mut call_data = REPORT_METRICS_SELECTOR.to_vec();
         app_id.encode_to(&mut call_data);
         day_start_ms.encode_to(&mut call_data);
         stored_bytes.encode_to(&mut call_data);
-        requests.encode_to(&mut call_data);
+        wcu_used.encode_to(&mut call_data);
+        rcu_used.encode_to(&mut call_data);
         call_data
     }
 
@@ -576,13 +582,15 @@ impl MetricsAggregator {
             // New app.
             let mut new_metric_obj = MetricInfo::new();
             new_metric_obj.appPubKey = metrics.appPubKey.clone();
-            new_metric_obj.requests = metrics.requests;
-            new_metric_obj.bytes = metrics.bytes;
+            new_metric_obj.storageBytes = metrics.storageBytes;
+            new_metric_obj.wcuUsed = metrics.wcuUsed;
+            new_metric_obj.rcuUsed = metrics.rcuUsed;
             self.0.push(new_metric_obj);
         } else {
             // Add to metrics of an existing app.
-            self.0[existing_pubkey_index.unwrap()].requests += metrics.requests;
-            self.0[existing_pubkey_index.unwrap()].bytes += metrics.bytes;
+            self.0[existing_pubkey_index.unwrap()].storageBytes += metrics.storageBytes;
+            self.0[existing_pubkey_index.unwrap()].wcuUsed += metrics.wcuUsed;
+            self.0[existing_pubkey_index.unwrap()].rcuUsed += metrics.rcuUsed;
         }
     }
 

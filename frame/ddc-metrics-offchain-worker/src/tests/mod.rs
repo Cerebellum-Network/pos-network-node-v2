@@ -86,6 +86,7 @@ fn test_encode_report_metrics() {
         3 + (4 << 8),
         5 + (6 << 16),
         7 + (8 << 24),
+        9 + (16 << 24),
     );
     assert_eq!(
         call_data,
@@ -95,7 +96,8 @@ fn test_encode_report_metrics() {
             2, 2, 2, // 32 bytes, app_id
             3, 4, 0, 0, 0, 0, 0, 0, // 8 bytes, day_start_ms
             5, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16 bytes, stored_bytes
-            7, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16 bytes, requests
+            7, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16 bytes, wcu_used
+            9, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 16 bytes, rcu_used
         ]
     );
 }
@@ -238,7 +240,7 @@ fn should_submit_signed_transaction_on_chain() {
             "00a2e826451b78afb99241b1331e7594526329225ff8937dbc62f43ec20d1830"
         ));
         let expected_call =
-            DdcMetricsOffchainWorker::encode_report_metrics(&app_id, INIT_DAY_MS, 1 + 10, 2 + 20);
+            DdcMetricsOffchainWorker::encode_report_metrics(&app_id, INIT_DAY_MS, 1 + 10, 2 + 20, 3 + 30);
         assert!(
             transactions[0].ends_with(&expected_call),
             "Expected a specific call to the report_metrics function"
@@ -249,7 +251,7 @@ fn should_submit_signed_transaction_on_chain() {
             "100ad4097b6e60700a5d5c5294cb6d663090ef5f547e84cc20ec6bcc7a552f13"
         ));
         let expected_call =
-            DdcMetricsOffchainWorker::encode_report_metrics(&app_id, INIT_DAY_MS, 100, 200);
+            DdcMetricsOffchainWorker::encode_report_metrics(&app_id, INIT_DAY_MS, 100, 200, 300);
         assert!(
             transactions[1].ends_with(&expected_call),
             "Expected a specific call to the report_metrics function"

@@ -27,6 +27,7 @@ use frame_support::traits::{Currency, ExistenceRequirement, Get, OnUnbalanced, W
 use frame_support::StorageMap;
 use pallet_contracts_primitives::{ContractAccessError, RentProjection, RentProjectionResult};
 use sp_runtime::traits::{Bounded, CheckedDiv, CheckedMul, SaturatedConversion, Saturating, Zero};
+use log::{debug, error, log_enabled};
 
 /// The amount to charge.
 ///
@@ -102,6 +103,11 @@ fn compute_fee_per_block<T: Trait>(
 	)
 	.saturating_sub(free_storage);
 
+	debug!(
+		target: "contract",
+		"Effective storage is'{:?}'.", effective_storage_size,
+	);
+
 	effective_storage_size
 		.checked_mul(&T::RentByteFee::get())
 		.unwrap_or_else(|| <BalanceOf<T>>::max_value())
@@ -157,9 +163,16 @@ fn consider_case<T: Trait>(
 
 	let total_balance = T::Currency::total_balance(account);
 	let free_balance = T::Currency::free_balance(account);
-
+	debug!(
+		target: "contract",
+		"Total balance is'{:?}'.", total_balance,
+	);
 	// An amount of funds to charge per block for storage taken up by the contract.
 	let fee_per_block = compute_fee_per_block::<T>(&free_balance, contract);
+	debug!(
+		target: "contract",
+		"Fee per block is '{:?}'.", fee_per_block,
+	);
 	if fee_per_block.is_zero() {
 		// The rent deposit offset reduced the fee to 0. This means that the contract
 		// gets the rent for free.

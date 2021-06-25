@@ -1,0 +1,13 @@
+name: Run tests
+on:
+  repository_dispatch:
+    types: NEW_VERSION_DDC_SMART_CONTRACT
+
+jobs:
+  myEvent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.client_payload.ref }}
+      - run: echo ${{ github.event.client_payload.DDC_SMART_CONTRACT_VERSION }}
